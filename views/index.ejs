@@ -1,0 +1,54 @@
+<%- include('header'); -%>
+<br><br>
+<!-- Page Content -->
+<div class="container">
+
+  <div class="row">
+
+    <!-- Blog Entries Column -->
+    <div class="col-md-8">
+      <div class="card mb-4">
+        <%- messages('message', locals) %>
+      </div>
+      <!-- Blog Post -->
+      <div class="card mb-4">
+        <img class="card-img-top" src="/images/logo.png" alt="Card image cap">
+        <div class="card-body">
+          <% if(user){ %>
+          <h2 class="card-title">Welcome
+            <%= user.name %>!</h2>
+          <% } else {%>
+          <h2 class="card-title">Welcome Guest!</h2>
+          <% } %>
+          <p class="card-text">Browse existing questions or ask your own.</p>
+        </div>
+      </div>
+
+      <% if(questions) { %>
+      <% for(var i=0;i<questions.length;i++){ %>
+      <div class="card mb-4">
+        <div class="card-body">
+          <h2 class="card-title"><a href="/questions/<%= questions[i]._id %>">
+              <%= questions[i].title  %></a></h2>
+          <p class="card-text">
+            <% for(var j=0;j<questions[i].tags.length;j++){ %>
+            <a href="/questions/search/tag/<%= questions[i].tags[j] %>"><span style="background-color:#ADD8E6">
+                <%= questions[i].tags[j] %></span></a>&nbsp;&nbsp;
+            <% } %>
+          </p>
+          <!--<a href="/questions/<%= questions[i]._id %>" class="btn btn-primary"><%= questions[i].tags %></a><-->
+        </div>
+        <div class="card-footer text-muted" align="right">Asked on -
+          <%= questions[i].timestamp %> by
+          <a href="/users/<%= questions[i].askedby %>">
+            <%= questions[i].asker %></a>
+        </div>
+      </div>
+      <% } %>
+      <% } %>
+
+
+
+    </div>
+
+<%- include('footer'); -%>
