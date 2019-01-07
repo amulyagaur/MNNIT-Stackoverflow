@@ -14,7 +14,7 @@ module.exports = (passport) => {
           console.log(profile.id);
            User.findOrCreate({ name: profile.displayName,
             email: profile.emails[0].value,
-            regno: 12345678,
+            //regno: 12345678,
             password: profile.id }, function (err, user) {
              return done(err, user);
            });

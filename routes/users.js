@@ -14,6 +14,33 @@ router.get('/register', function (req, res) {
     res.render('register', { title: 'Register' });
 });
 
+router.post('/regno', function (req, res) {
+
+    const regno = req.body.reg;
+    req.checkBody('reg', 'Registration number is required').notEmpty();
+    req.checkBody('reg', 'Registration number is invalid').isLength({ min: 8, max: 8 });
+    let errors = req.validationErrors();
+    if (errors) {
+        console.log(errors);
+        res.render('getregno', {
+            title: 'Input Registration number',
+            errors: errors
+        });
+    }
+    else {
+        User.findByIdAndUpdate(req.user._id, { regno: regno }, function (err) {
+            if (err) {
+                console.log(errors);
+                return;
+            }
+            else {
+                req.flash('success','Registration number completed successfully');
+                res.redirect('/');
+            }
+        });
+    }
+});
+
 router.post('/register', function (req, res) {
 
     const name = req.body.name;
@@ -112,9 +139,9 @@ router.get('/:id', function (req, res) {
                                 else {
                                     var frequency = {}, value;
                                     for (var i = 0; i < allq.length; i++) {
-                                        for (var j = 0; j < questions[i].tags.length; j++) {
-                                            console.log(questions[i].tags[j]);
-                                            value = questions[i].tags[j];
+                                        for (var j = 0; j < allq[i].tags.length; j++) {
+                                            console.log(allq[i].tags[j]);
+                                            value = allq[i].tags[j];
                                             if (value in frequency) {
                                                 frequency[value]++;
                                             }
@@ -127,11 +154,11 @@ router.get('/:id', function (req, res) {
                                     for (value in frequency) {
                                         uniques.push(value);
                                     }
-                        
+
                                     function compareFrequency(a, b) {
                                         return frequency[b] - frequency[a];
                                     }
-                        
+
                                     var result = uniques.sort(compareFrequency);
                                     console.log(result);
                                     console.log(answers);
@@ -142,7 +169,7 @@ router.get('/:id', function (req, res) {
                                         questions: questions,
                                         answers: answers,
                                         allq: allq,
-                                        trendingtags:result
+                                        trendingtags: result
                                     });
                                 }
 

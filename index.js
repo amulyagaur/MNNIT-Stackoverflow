@@ -85,7 +85,20 @@ app.get('*', function (req, res, next) {
 
 app.get('/', function (req, res) {
 
-    Question.find({}, function (err, question) {
+    if(req.user)
+    {
+        if(req.user.regno == 12345678)
+        {
+            res.render('getregno',{
+                title:'Input Registration number'
+            });
+        }
+    }
+    else
+    console.log("no one");
+
+    Question.find({}, function (err, question) 
+    {
         if (err)
             console.log(err);
         else {
@@ -96,7 +109,6 @@ app.get('/', function (req, res) {
                     var frequency = {}, value;
                     for (var i = 0; i < questions.length; i++) {
                         for (var j = 0; j < questions[i].tags.length; j++) {
-                            console.log(questions[i].tags[j]);
                             value = questions[i].tags[j];
                             if (value in frequency) {
                                 frequency[value]++;
@@ -110,35 +122,37 @@ app.get('/', function (req, res) {
                     for (value in frequency) {
                         uniques.push(value);
                     }
-        
+
                     function compareFrequency(a, b) {
                         return frequency[b] - frequency[a];
                     }
-        
+
                     var result = uniques.sort(compareFrequency);
-                    console.log(result);
-            res.render('index', {
-                title: 'Home',
-                questions: question,
-                trendingtags: result
+                    
+                    res.render('index', {
+                        title: 'Home',
+                        questions: question,
+                        trendingtags: result
+                    });
+                }
             });
-        }
-    });
         }
 
     });
 });
 
 app.get('/auth/google',
-  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/userinfo.profile',
-  'https://www.googleapis.com/auth/userinfo.email'] }));
+    passport.authenticate('google', {
+        scope: ['https://www.googleapis.com/auth/userinfo.profile',
+            'https://www.googleapis.com/auth/userinfo.email']
+    }));
 
-  app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
-      req.flash('success','Logged in via google');
-    res.redirect('/');
-  });
+app.get('/auth/google/callback',
+    passport.authenticate('google', { failureRedirect: '/login' }),
+    function (req, res) {
+        req.flash('success', 'Logged in via google');
+        res.redirect('/');
+    });
 
 
 let users = require('./routes/users');

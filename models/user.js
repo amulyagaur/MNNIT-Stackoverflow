@@ -12,7 +12,8 @@ let userSchema = mongoose.Schema({
     },
     regno: {
         type: Number,
-        required: true
+        required: true,
+        default: 12345678
     },
     password: {
         type: String,
